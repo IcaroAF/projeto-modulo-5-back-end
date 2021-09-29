@@ -2,7 +2,7 @@ const knex = require('../connection');
 const bcrypt = require('bcrypt');
 
 const SignUpUser = async (req, res) => {
-    const {nome, email, senha, cpf, telefone} = req.body;
+    const {nome, email, senha} = req.body;
 
     if(!nome){
         return res.status(404).json("O campo nome é obrigatório");
@@ -27,8 +27,6 @@ const SignUpUser = async (req, res) => {
             nome,
             email,
             senha: encryptedPassword,
-            cpf,
-            telefone
         }
 
         const query = await knex('usuarios').insert(queryObject);
