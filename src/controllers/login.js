@@ -10,15 +10,17 @@ const login = async (req, res) => {
     }
 
     try{
-        const { rowCount, rows } = await knex('usuarios').where('email', email);
+        const userLogin = await knex('usuarios').where('email', email);
 
-        if(rowCount === 0){
+
+        console.log(userLogin);
+        if(userLogin.length === 0){
             return res.status(400).json("O usuário não foi encontrado");
         }
 
-        return res.json(rowCount, rows);
+        
 
-        const user = rows[0];
+        const user = userLogin[0];
 
         const correctPassword = await bcrypt.compare(senha, user.senha);
 
