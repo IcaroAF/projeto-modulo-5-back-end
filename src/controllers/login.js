@@ -16,6 +16,8 @@ const login = async (req, res) => {
             return res.status(400).json("O usuário não foi encontrado");
         }
 
+        return res.json(rowCount, rows);
+
         const user = rows[0];
 
         const correctPassword = await bcrypt.compare(senha, user.senha);
