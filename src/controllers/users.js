@@ -1,5 +1,5 @@
 const knex = require('../connection');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const SignUpUser = async (req, res) => {
     const {nome, email, senha} = req.body;
