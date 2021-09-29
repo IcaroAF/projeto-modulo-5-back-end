@@ -12,13 +12,9 @@ const login = async (req, res) => {
     try{
         const userLogin = await knex('usuarios').where('email', email);
 
-
-        console.log(userLogin);
         if(userLogin.length === 0){
             return res.status(400).json("O usuário não foi encontrado");
         }
-
-        
 
         const user = userLogin[0];
 
