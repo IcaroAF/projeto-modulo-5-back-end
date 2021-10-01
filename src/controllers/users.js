@@ -41,6 +41,50 @@ const SignUpUser = async (req, res) => {
     }
 }
 
+const userEdit = async (req, res)=>{
+    const {nome, email, senha, cpf, telefone} = req.body;
+    const {usuario} = req;
+
+    if(cpf && cpf.length !== 11){
+        res.status(404).json("O campo cpf precisa ter 11 dígitos");
+    }
+    if(telefone.length < 10 || telefone.length > 11){
+        res.status(404).json("O campo telefone precisa ter 10 ou 11 dígitos (Incluindo o ddd)");
+    }    
+
+    
+
+    try {
+        if(email){
+            const checkNewEmail = await knex('usuarios').where('email', email).whereNot('id', usuario.id).debug();
+
+            //console.log(checkNewEmail);
+    
+            if(checkNewEmail.length>0){
+                return res.status(400).json("O e-mail informado já está cadastrado")
+            }
+        }
+        
+        let encryptedPassword;
+        if(senha){
+            encryptedPassword = await bcrypt.hash(senha,10);
+        }
+              
+        const updateUserProfile = await knex('usuarios').update({nome,
+         email, 
+         senha: encryptedPassword, 
+         cpf, 
+         telefone}).where('id', usuario.id);
+
+        console.log(updateUserProfile)
+
+        return res.status(200).json("Usuário cadastrado com sucesso");
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+}
+
 module.exports = {
     SignUpUser,
+    userEdit
 }

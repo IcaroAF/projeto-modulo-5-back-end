@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const hashPwd = require('../hashPwd');
-const connection = require('../connection');
-const { default: knex } = require('knex');
+const knex = require('../connection');
 
 const verifyLogin = async (req, res, next) => {
     const { authorization } = req.headers;

@@ -1,7 +1,7 @@
 const express = require('express');
 const users = require('./controllers/users');
 const login = require('./controllers/login');
-const verifyLogin = ('./filters/loginVerifier.js');
+const verifyLogin = require('./filters/loginVerifier');
 
 
 const routes = express();
@@ -14,5 +14,8 @@ routes.post('/login', login.login);
 
 //middleware para a verificação do usuário logado
 routes.use(verifyLogin);
+
+//cria endpoint de atualização de cadastro do usuario;
+routes.put('/users', users.userEdit);
 
 module.exports = routes;
