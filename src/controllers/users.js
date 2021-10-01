@@ -78,7 +78,7 @@ const userEdit = async (req, res)=>{
 
         console.log(updateUserProfile)
 
-        return res.status(200).json("Usuário cadastrado com sucesso");
+        return res.status(200).json("Usuário atualizado com sucesso.");
     } catch (error) {
         return res.status(400).json(error.message);
     }
