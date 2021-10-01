@@ -1,6 +1,7 @@
 const express = require('express');
 const users = require('./controllers/users');
 const login = require('./controllers/login');
+const clients = require('./controllers/clients');
 const verifyLogin = require('./filters/loginVerifier');
 
 
@@ -17,5 +18,8 @@ routes.use(verifyLogin);
 
 //cria endpoint de atualização de cadastro do usuario;
 routes.put('/users', users.userEdit);
+
+//cria endpoint de cadastro de cliente;
+routes.post('/clients', clients.signUpClient);
 
 module.exports = routes;
