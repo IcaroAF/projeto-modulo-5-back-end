@@ -22,4 +22,7 @@ routes.put('/users', users.userEdit);
 //cria endpoint de cadastro de cliente;
 routes.post('/clients', clients.signUpClient);
 
+//atualização de cadastro do cliente;
+routes.put('/clients', clients.editCLientProfile);
+
 module.exports = routes;

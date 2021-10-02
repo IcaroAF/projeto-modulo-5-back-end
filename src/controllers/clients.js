@@ -33,9 +33,9 @@ const signUpClient = async (req, res)=>{
             return res.status(400).json("Já existe um cliente este CPF cadastrado.");
         }
         
-           const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
-            const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
+        const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
         
 
         const queryObject = {
@@ -63,6 +63,56 @@ const signUpClient = async (req, res)=>{
     }
 }
 
+const editCLientProfile = async(req, res)=>{
+    const{nome, email, cpf, telefone, cep} = req.body;
+
+    const clientData = await knex('clientes').where('cpf', cpf);
+
+    if(clientData.length ===0){
+        return res.status(404).json("O cliente informado não foi encontrado.");
+    }
+
+    const {senha, ...cliente} = clientData[0];
+
+    req.cliente = cliente;
+
+    try {
+    const checkNewEmail = await knex('clientes').where('email', email).whereNot('id', cliente.id);
+
+    if(checkNewEmail.length>0){
+        return res.status(400).json("O e-mail informado já está cadastrado.");
+    }
+
+    const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+
+    const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
+
+    const clientProfileObj = {
+        nome,
+        email,
+        cpf,
+        telefone,
+        cep,
+        logradouro,
+        complemento,
+        bairro,
+        cidade,
+        estado
+    }
+
+    const updateClientProfile = await knex('clientes').update(clientProfileObj).where('id', cliente.id);
+
+    if(updateClientProfile !== 1){
+        return res.status(400).json("Não foi possível atualizar o cadastro do cliente.");
+    }
+
+        return res.status(200).json("Cliente atualizado com sucesso.");
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+}
+
 module.exports ={
     signUpClient,
+    editCLientProfile
 }
