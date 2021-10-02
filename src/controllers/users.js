@@ -1,7 +1,8 @@
 const knex = require('../connection');
 const bcrypt = require('bcryptjs');
+const {cpf: validCPF} = require('cpf-cnpj-validator');
 
-const SignUpUser = async (req, res) => {
+const signUpUser = async (req, res) => {
     const {nome, email, senha} = req.body;
 
     if(!nome){
@@ -45,20 +46,18 @@ const userEdit = async (req, res)=>{
     const {nome, email, senha, cpf, telefone} = req.body;
     const {usuario} = req;
 
-    if(cpf && cpf.length !== 11){
-        res.status(404).json("O campo cpf precisa ter 11 dígitos");
+    if(!validCPF.isValid(cpf)){
+        return res.status(400).json("Digite um CPF válido.");
     }
     if(telefone.length < 10 || telefone.length > 11){
-        res.status(404).json("O campo telefone precisa ter 10 ou 11 dígitos (Incluindo o ddd)");
+        return res.status(404).json("O campo telefone precisa ter 10 ou 11 dígitos (Incluindo o ddd)");
     }    
 
     
 
     try {
         if(email){
-            const checkNewEmail = await knex('usuarios').where('email', email).whereNot('id', usuario.id).debug();
-
-            //console.log(checkNewEmail);
+            const checkNewEmail = await knex('usuarios').where('email', email).whereNot('id', usuario.id);
     
             if(checkNewEmail.length>0){
                 return res.status(400).json("O e-mail informado já está cadastrado")
@@ -76,7 +75,9 @@ const userEdit = async (req, res)=>{
          cpf, 
          telefone}).where('id', usuario.id);
 
-        console.log(updateUserProfile)
+         if(updateUserProfile !== 1){
+            return res.status(400).json("Não foi possível atualizar o cadastro do usuário.");
+        }
 
         return res.status(200).json("Usuário atualizado com sucesso.");
     } catch (error) {
@@ -85,6 +86,6 @@ const userEdit = async (req, res)=>{
 }
 
 module.exports = {
-    SignUpUser,
+    signUpUser,
     userEdit
 }

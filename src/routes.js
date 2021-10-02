@@ -8,7 +8,7 @@ const verifyLogin = require('./filters/loginVerifier');
 const routes = express();
 
 // cadastra os usuários no banco de dados
-routes.post('/users', users.SignUpUser);
+routes.post('/users', users.signUpUser);
 
 //faz login do usuário
 routes.post('/login', login.login);
