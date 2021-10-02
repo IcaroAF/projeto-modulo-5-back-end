@@ -1,5 +1,6 @@
 const knex = require('../connection');
 const axios = require('axios');
+const {cpf: validCPF} = require('cpf-cnpj-validator');
 
 const signUpClient = async (req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
@@ -18,6 +19,10 @@ const signUpClient = async (req, res)=>{
 
     if(!telefone){
         return res.status(404).json('O campo telefone é obrigatório.')
+    }
+
+    if(!validCPF.isValid(cpf)){
+        return res.status(400).json("Digite um CPF válido.");
     }
 
     try {
@@ -65,6 +70,10 @@ const signUpClient = async (req, res)=>{
 
 const editCLientProfile = async(req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
+
+    if(!validCPF.isValid(cpf)){
+        return res.status(400).json("Digite um CPF válido.");
+    }
 
     const clientData = await knex('clientes').where('cpf', cpf);
 
