@@ -1,6 +1,7 @@
 const knex = require('../connection');
 const axios = require('axios');
 const {cpf: validCPF} = require('cpf-cnpj-validator');
+const validEmail = require('email-validator');
 
 const signUpClient = async (req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
@@ -21,6 +22,10 @@ const signUpClient = async (req, res)=>{
         return res.status(404).json('O campo telefone é obrigatório.')
     }
 
+    if(!validEmail.validate(email)){
+        return res.status(400).json("Digite um email válido.");
+    }
+
     if(!validCPF.isValid(cpf)){
         return res.status(400).json("Digite um CPF válido.");
     }
@@ -35,7 +40,7 @@ const signUpClient = async (req, res)=>{
         }
 
         if(clientSameCpf[0]){
-            return res.status(400).json("Já existe um cliente este CPF cadastrado.");
+            return res.status(400).json("Já existe um cliente com este CPF cadastrado.");
         }
         
         const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
@@ -71,6 +76,10 @@ const signUpClient = async (req, res)=>{
 const editCLientProfile = async(req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
 
+    if(!validEmail.validate(email)){
+        return res.status(400).json("Digite um email válido.");
+    }
+
     if(!validCPF.isValid(cpf)){
         return res.status(400).json("Digite um CPF válido.");
     }
@@ -90,6 +99,14 @@ const editCLientProfile = async(req, res)=>{
 
     if(checkNewEmail.length>0){
         return res.status(400).json("O e-mail informado já está cadastrado.");
+    }
+
+    if(cpf){
+        const checkNewCPF = await knex('clientes').where('cpf', cpf).whereNot('id', cliente.id);
+
+        if(checkNewCPF.length>0){
+            return res.status(400).json("O CPF informado já está cadastrado")
+        }
     }
 
     const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);

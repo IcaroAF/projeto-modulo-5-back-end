@@ -1,6 +1,7 @@
 const knex = require('../connection');
 const bcrypt = require('bcryptjs');
 const {cpf: validCPF} = require('cpf-cnpj-validator');
+const validEmail = require('email-validator');
 
 const signUpUser = async (req, res) => {
     const {nome, email, senha} = req.body;
@@ -13,6 +14,10 @@ const signUpUser = async (req, res) => {
     }
     if(!senha){
         return res.status(404).json("O campo senha é obrigatório");
+    }
+
+    if(!validEmail.validate(email)){
+        return res.status(400).json("Digite um email válido.");
     }
 
     try {
@@ -49,6 +54,9 @@ const userEdit = async (req, res)=>{
     if(!validCPF.isValid(cpf)){
         return res.status(400).json("Digite um CPF válido.");
     }
+    if(!validEmail.validate(email)){
+        return res.status(400).json("Digite um email válido.");
+    }
     if(telefone.length < 10 || telefone.length > 11){
         return res.status(404).json("O campo telefone precisa ter 10 ou 11 dígitos (Incluindo o ddd)");
     }    
@@ -61,6 +69,14 @@ const userEdit = async (req, res)=>{
     
             if(checkNewEmail.length>0){
                 return res.status(400).json("O e-mail informado já está cadastrado")
+            }
+        }
+
+        if(cpf){
+            const checkNewCPF = await knex('usuarios').where('cpf', cpf).whereNot('id', usuario.id);
+    
+            if(checkNewCPF.length>0){
+                return res.status(400).json("O CPF informado já está cadastrado")
             }
         }
         
