@@ -51,9 +51,7 @@ const userEdit = async (req, res)=>{
     const {nome, email, senha, cpf, telefone} = req.body;
     const {usuario} = req;
 
-    if(!validCPF.isValid(cpf)){
-        return res.status(400).json("Digite um CPF válido.");
-    }
+    
     if(!validEmail.validate(email)){
         return res.status(400).json("Digite um email válido.");
     }
@@ -73,6 +71,11 @@ const userEdit = async (req, res)=>{
         }
 
         if(cpf){
+
+            if(!validCPF.isValid(cpf)){
+                return res.status(400).json("Digite um CPF válido.");
+            }
+            
             const checkNewCPF = await knex('usuarios').where('cpf', cpf).whereNot('id', usuario.id);
     
             if(checkNewCPF.length>0){
