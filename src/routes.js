@@ -2,6 +2,7 @@ const express = require('express');
 const users = require('./controllers/users');
 const login = require('./controllers/login');
 const clients = require('./controllers/clients');
+const charges = require('./controllers/charges');
 const verifyLogin = require('./filters/loginVerifier');
 
 
@@ -24,5 +25,8 @@ routes.post('/clients', clients.signUpClient);
 
 //atualização de cadastro do cliente;
 routes.put('/clients', clients.editCLientProfile);
+
+//rota para criação de cobrança
+routes.post('/charges', charges.createCharge);
 
 module.exports = routes;
