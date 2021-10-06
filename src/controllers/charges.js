@@ -26,14 +26,15 @@ const createCharge = async(req, res)=> {
             return res.status(404).json(`Não há cliente com o id ${cliente_id} cadastrado no sistema`);
         }
 
-    //console.log(cliente_id);    
-    console.log(existentCustomer)
-
     const chargeObj = {
         cliente_id, descricao, valor, status, data_vencimento
     }
 
     const insertCharge = await knex('cobrancas').insert(chargeObj);
+
+    if(insertCharge.rowCount ===0){
+        return res.status(400).json("Não foi possível cadastrar a cobrança");
+    }
 
     return res.status(200).json("cobranca cadastrada");
         
