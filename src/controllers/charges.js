@@ -43,7 +43,16 @@ const createCharge = async(req, res)=> {
     }
 }
 
+const listAllCharges = async(req, res)=> {
+
+    const getList = await knex.from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento').debug();
+
+    //console.log(getList);
+
+    return res.json(getList);
+}
+
 module.exports = {
     createCharge,
-
+    listAllCharges
 }
