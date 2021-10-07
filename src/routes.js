@@ -29,4 +29,6 @@ routes.put('/clients', clients.editCLientProfile);
 //rota para criação de cobrança
 routes.post('/charges', charges.createCharge);
 
+//rota para obter lista de cobranças
+routes.get('/charges', charges.listAllCharges);
 module.exports = routes;
