@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const knex = require('knex')({
     client: 'pg',
     connection: {
@@ -11,16 +14,5 @@ const knex = require('knex')({
         }
     }
 });
-
-// const knex = require('knex')({
-//     client: 'pg',
-//     connection: {
-//       host : 'localhost',
-//       user : 'postgres',
-//       password : 'postgres',
-//       database : 'testelocal_desafio',
-//       port: 5432
-//     }
-//   });
 
 module.exports = knex;

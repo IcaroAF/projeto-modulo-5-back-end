@@ -1,7 +1,8 @@
 const knex = require('../connection');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const hashPwd = require('../hashPwd');
+require('dotenv').config();
+
 
 const login = async (req, res) => {
     const {email, senha} = req.body;
@@ -24,7 +25,7 @@ const login = async (req, res) => {
             return res.status(400).json("Email e senha não conferem");
         }
 
-        const token = jwt.sign({ id: user.id}, hashPwd, { expiresIn: '2h'});
+        const token = jwt.sign({ id: user.id}, process.env.JWT_SECRET, { expiresIn: '2h'});
 
         const {senha: userPwd, ...userData } = user;
 
