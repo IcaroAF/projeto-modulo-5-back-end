@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const hashPwd = require('../hashPwd');
 const knex = require('../connection');
+require('dotenv').config();
 
 const verifyLogin = async (req, res, next) => {
     const { authorization } = req.headers;
@@ -12,7 +13,7 @@ const verifyLogin = async (req, res, next) => {
     try {
         const token = authorization.replace('Bearer', '').trim();
 
-        const { id } = jwt.verify(token, hashPwd);
+        const { id } = jwt.verify(token, process.env.JWT_SECRET);
 
         const verificationQuery = await knex('usuarios').where('id', id);
 
