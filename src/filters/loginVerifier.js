@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const hashPwd = require('../hashPwd');
 const knex = require('../connection');
 require('dotenv').config();
 
