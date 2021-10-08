@@ -152,7 +152,17 @@ const listAllCustomers = async (req, res)=>{
     return res.json(getCustomersList);
 }
 
+const customerInfo = async (req, res)=>{
+    const id  = Number(req.params.idCliente);
 
+    console.log(id);
+
+    const getCustomerInfo = await knex('clientes').leftJoin('cobrancas', 'cobrancas.cliente_id', 'clientes.id').where('clientes.id', `${id}`).groupBy('clientes.id', 'cobrancas.id').debug();
+
+    console.log(getCustomerInfo)
+
+    return res.status(200).json(getCustomerInfo);
+}
 
 module.exports ={
     signUpClient,

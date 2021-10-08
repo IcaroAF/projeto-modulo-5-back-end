@@ -35,4 +35,7 @@ routes.get('/charges', charges.listAllCharges);
 //rota para obter lista de clientes
 routes.get('/clients', clients.listAllCustomers);
 
+//rota para obter dado de um cliente
+routes.get('/clients/:idCliente', clients.customerInfo);
+
 module.exports = routes;
