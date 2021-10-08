@@ -75,7 +75,7 @@ const userEdit = async (req, res)=>{
             if(!validCPF.isValid(cpf)){
                 return res.status(400).json("Digite um CPF válido.");
             }
-            
+
             const checkNewCPF = await knex('usuarios').where('cpf', cpf).whereNot('id', usuario.id);
     
             if(checkNewCPF.length>0){
@@ -104,7 +104,19 @@ const userEdit = async (req, res)=>{
     }
 }
 
+const getUser = async(req, res)=>{
+    const { usuario }  = req;
+
+    console.log(usuario.id);
+
+    const userData = await knex('usuarios').where('usuarios.id', usuario.id).debug();
+    console.log(userData);
+
+    return res.status(200).json(userData);
+}
+
 module.exports = {
     signUpUser,
-    userEdit
+    userEdit,
+    getUser
 }

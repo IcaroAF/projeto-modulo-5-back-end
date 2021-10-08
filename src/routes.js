@@ -38,4 +38,7 @@ routes.get('/clients', clients.listAllCustomers);
 //rota para obter dado de um cliente
 routes.get('/clients/:idCliente', clients.customerInfo);
 
+//obter usuario logado
+routes.get('/users', users.getUser);
+
 module.exports = routes;
