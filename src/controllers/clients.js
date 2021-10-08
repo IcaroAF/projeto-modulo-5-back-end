@@ -2,7 +2,6 @@ const knex = require('../connection');
 const axios = require('axios');
 const {cpf: validCPF} = require('cpf-cnpj-validator');
 const validEmail = require('email-validator');
-const { subMilliseconds } = require('date-fns');
 
 const signUpClient = async (req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
@@ -153,8 +152,11 @@ const listAllCustomers = async (req, res)=>{
     return res.json(getCustomersList);
 }
 
+
+
 module.exports ={
     signUpClient,
     editCLientProfile,
-    listAllCustomers
+    listAllCustomers,
+    customerInfo
 }
