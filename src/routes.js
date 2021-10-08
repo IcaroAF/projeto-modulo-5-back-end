@@ -31,4 +31,8 @@ routes.post('/charges', charges.createCharge);
 
 //rota para obter lista de cobranças
 routes.get('/charges', charges.listAllCharges);
+
+//rota para obter lista de clientes
+routes.get('/clients', clients.listAllCustomers);
+
 module.exports = routes;

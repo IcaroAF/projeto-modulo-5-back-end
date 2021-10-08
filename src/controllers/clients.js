@@ -2,6 +2,7 @@ const knex = require('../connection');
 const axios = require('axios');
 const {cpf: validCPF} = require('cpf-cnpj-validator');
 const validEmail = require('email-validator');
+const { subMilliseconds } = require('date-fns');
 
 const signUpClient = async (req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
@@ -138,7 +139,22 @@ const editCLientProfile = async(req, res)=>{
     }
 }
 
+const listAllCustomers = async (req, res)=>{
+    const getCustomersList = await knex
+   .select('clientes.nome', 'email', 'telefone', 
+   knex.raw(`SUM(CASE WHEN cobrancas.status = 'pago' THEN cobrancas.valor else 0 END) as so_pago`))
+   .sum('cobrancas.valor as valor_cobrado')
+   .from('clientes')
+   .leftJoin('cobrancas', 'clientes.id', 'cobrancas.cliente_id')
+   .groupBy('clientes.id');
+
+    //console.log(getCustomersList)
+
+    return res.json(getCustomersList);
+}
+
 module.exports ={
     signUpClient,
-    editCLientProfile
+    editCLientProfile,
+    listAllCustomers
 }
