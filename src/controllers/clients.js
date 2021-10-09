@@ -140,16 +140,33 @@ const editCLientProfile = async(req, res)=>{
 
 const listAllCustomers = async (req, res)=>{
     const getCustomersList = await knex
-   .select('clientes.nome', 'email', 'telefone', 
+   .select('clientes.id','clientes.nome', 'email', 'telefone', 
    knex.raw(`SUM(CASE WHEN cobrancas.status = 'pago' THEN cobrancas.valor else 0 END) as so_pago`))
    .sum('cobrancas.valor as valor_cobrado')
    .from('clientes')
    .leftJoin('cobrancas', 'clientes.id', 'cobrancas.cliente_id')
    .groupBy('clientes.id');
 
+   const CustomerObj =  await Promise.all(getCustomersList.map(async customer=> {
+       const customerCharges = await knex.select('cobrancas.cliente_id', 'status', 'data_vencimento').from('cobrancas').where('cobrancas.cliente_id', customer.id);
+
+       let isOverdue = false;
+
+       customerCharges.map(charge => {
+           if(charge.data_vencimento.getTime()<Date.now() && charge.status !== 'pago'){
+            isOverdue = true;
+           }
+       })
+
+       return {...customer, statusCliente: isOverdue? 'Inadimplente' : 'Em dia' }
+   } ))
+
+
+
+
     //console.log(getCustomersList)
 
-    return res.json(getCustomersList);
+    return res.json(CustomerObj);
 }
 
 const customerInfo = async (req, res)=>{
@@ -159,9 +176,26 @@ const customerInfo = async (req, res)=>{
 
     const getCustomerInfo = await knex('clientes').leftJoin('cobrancas', 'cobrancas.cliente_id', 'clientes.id').where('clientes.id', `${id}`).groupBy('clientes.id', 'cobrancas.id').debug();
 
-    console.log(getCustomerInfo)
+    const customerObj = {
+        id: getCustomerInfo[0].cliente_id,
+        nome: getCustomerInfo[0].nome,
+        email: getCustomerInfo[0].email,
+        telefone: getCustomerInfo[0].telefone,
+        cobrancas: getCustomerInfo.map(cobranca => ({
+            id: cobranca.id,
+            descricao: cobranca.descricao,
+            valor: cobranca.valor,
+            data_vencimento: cobranca.data_vencimento,
+            status: cobranca.status
+        }))
 
-    return res.status(200).json(getCustomerInfo);
+    }
+
+
+    console.log(getCustomerInfo);
+    console.log(customerObj);
+
+    return res.status(200).json(customerObj);
 }
 
 module.exports ={
