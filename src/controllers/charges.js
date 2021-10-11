@@ -11,6 +11,10 @@ const createCharge = async(req, res)=> {
         return res.status(404).json("O campo valor é obrigatório.");
     }
 
+    if(!descricao){
+        return res.status(404).json("É obrigatório colocar uma descrição para a cobrança.");
+    }
+
     if(!status){
         return res.status(404).json("O campo status é obrigatório.");
     }
@@ -19,12 +23,26 @@ const createCharge = async(req, res)=> {
         return res.status(404).json("O campo data_vencimento é obrigatório.");
     }
 
+    // console.log(data_vencimento);
+    // console.log(new Date(data_vencimento).getTime());
+    // console.log(Date.now());
+
     try {
         const existentCustomer = await knex('clientes').select('nome', 'id').where('clientes.id', cliente_id);
 
         if(existentCustomer.length === 0){
             return res.status(404).json(`Não há cliente com o id ${cliente_id} cadastrado no sistema`);
         }
+
+
+        if(new Date(data_vencimento).getTime()>Date.now() && status === "vencido"){
+            return res.status(400).json("Não é possível adicionar uma cobrança como vencida numa data futura.");
+        }
+
+        if(new Date(data_vencimento).getTime()<Date.now() && status === "pendente"){
+            return res.status(400).json("Não é possível adicionar uma cobrança como pendente numa data passada.");
+        }
+
 
     const chargeObj = {
         cliente_id, descricao, valor, status, data_vencimento
