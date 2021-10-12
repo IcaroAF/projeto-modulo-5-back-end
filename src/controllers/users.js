@@ -16,8 +16,12 @@ const signUpUser = async (req, res) => {
         return res.status(404).json("O campo senha é obrigatório");
     }
 
+    if(senha.length < 6){
+        return res.status(404).json("A senha precisa ter pelo menos 6 dígitos");
+    }
+
     if(!validEmail.validate(email)){
-        return res.status(400).json("Digite um email válido.");
+        return res.status(404).json("Digite um email válido.");
     }
 
     try {
@@ -55,6 +59,11 @@ const userEdit = async (req, res)=>{
     if(!validEmail.validate(email)){
         return res.status(400).json("Digite um email válido.");
     }
+    
+    if(senha && senha.length < 6){
+        return res.status(404).json("A senha precisa ter pelo menos 6 dígitos");
+    }
+
     if(telefone.length < 10 || telefone.length > 11){
         return res.status(404).json("O campo telefone precisa ter 10 ou 11 dígitos (Incluindo o ddd)");
     }    
