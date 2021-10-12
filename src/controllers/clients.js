@@ -75,7 +75,23 @@ const signUpClient = async (req, res)=>{
 
 const editCLientProfile = async(req, res)=>{
     const id  = Number(req.params.idCliente);
-    const{nome, email, cpf, telefone, cep} = req.body;
+    const{nome, email, cpf, telefone, cep, complemento, ponto_referencia} = req.body;
+
+    if(!nome){
+        return res.status(404).json("O campo nome é obrigatório.");
+    }
+
+    if(!email){
+        return res.status(404).json("O campo email é obrigatório.");
+    }
+
+    if(!cpf){
+        return res.status(404).json('O campo cpf é obrigatório.')
+    }
+
+    if(!telefone){
+        return res.status(404).json('O campo telefone é obrigatório.')
+    }
 
     if(!validEmail.validate(email)){
         return res.status(400).json("Digite um email válido.");
@@ -112,7 +128,7 @@ const editCLientProfile = async(req, res)=>{
 
     const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
-    const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
+    const {logradouro, bairro, localidade: cidade, uf: estado} = response.data;
 
     const clientProfileObj = {
         id,
@@ -125,7 +141,8 @@ const editCLientProfile = async(req, res)=>{
         complemento,
         bairro,
         cidade,
-        estado
+        estado, 
+        ponto_referencia
     }
 
     const updateClientProfile = await knex('clientes').update(clientProfileObj).where('id', id);
