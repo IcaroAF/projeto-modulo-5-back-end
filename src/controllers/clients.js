@@ -140,7 +140,7 @@ const editCLientProfile = async(req, res)=>{
 
 const listAllCustomers = async (req, res)=>{
     const getCustomersList = await knex
-   .select('clientes.id','clientes.nome', 'email', 'telefone', 
+   .select('clientes.id','clientes.nome', 'email', 'telefone', 'cep', 'cpf', 
    knex.raw(`SUM(CASE WHEN cobrancas.status = 'pago' THEN cobrancas.valor else 0 END) as so_pago`))
    .sum('cobrancas.valor as valor_cobrado')
    .from('clientes')
