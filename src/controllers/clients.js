@@ -74,7 +74,8 @@ const signUpClient = async (req, res)=>{
 }
 
 const editCLientProfile = async(req, res)=>{
-    const{id, nome, email, cpf, telefone, cep} = req.body;
+    const id  = Number(req.params.idCliente);
+    const{nome, email, cpf, telefone, cep} = req.body;
 
     if(!validEmail.validate(email)){
         return res.status(400).json("Digite um email válido.");

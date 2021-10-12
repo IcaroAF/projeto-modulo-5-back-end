@@ -24,7 +24,7 @@ routes.put('/users', users.userEdit);
 routes.post('/clients', clients.signUpClient);
 
 //atualização de cadastro do cliente;
-routes.put('/clients', clients.editCLientProfile);
+routes.put('/clients/:idCliente', clients.editCLientProfile);
 
 //rota para criação de cobrança
 routes.post('/charges', charges.createCharge);
