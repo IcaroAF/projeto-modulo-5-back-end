@@ -74,7 +74,7 @@ const signUpClient = async (req, res)=>{
 }
 
 const editCLientProfile = async(req, res)=>{
-    const{nome, email, cpf, telefone, cep} = req.body;
+    const{id, nome, email, cpf, telefone, cep} = req.body;
 
     if(!validEmail.validate(email)){
         return res.status(400).json("Digite um email válido.");
@@ -84,25 +84,25 @@ const editCLientProfile = async(req, res)=>{
         return res.status(400).json("Digite um CPF válido.");
     }
 
-    const clientData = await knex('clientes').where('cpf', cpf);
+    const clientData = await knex('clientes').where('id', id);
 
     if(clientData.length ===0){
         return res.status(404).json("O cliente informado não foi encontrado.");
     }
 
-    const {senha, ...cliente} = clientData[0];
+    //const { cliente } = clientData[0];
 
-    req.cliente = cliente;
+    //req.cliente = cliente;
 
     try {
-    const checkNewEmail = await knex('clientes').where('email', email).whereNot('id', cliente.id);
+    const checkNewEmail = await knex('clientes').where('email', email).whereNot('id', id);
 
     if(checkNewEmail.length>0){
         return res.status(400).json("O e-mail informado já está cadastrado.");
     }
 
     if(cpf){
-        const checkNewCPF = await knex('clientes').where('cpf', cpf).whereNot('id', cliente.id);
+        const checkNewCPF = await knex('clientes').where('cpf', cpf).whereNot('id', id);
 
         if(checkNewCPF.length>0){
             return res.status(400).json("O CPF informado já está cadastrado")
@@ -114,6 +114,7 @@ const editCLientProfile = async(req, res)=>{
     const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
 
     const clientProfileObj = {
+        id,
         nome,
         email,
         cpf,
@@ -126,7 +127,7 @@ const editCLientProfile = async(req, res)=>{
         estado
     }
 
-    const updateClientProfile = await knex('clientes').update(clientProfileObj).where('id', cliente.id);
+    const updateClientProfile = await knex('clientes').update(clientProfileObj).where('id', id);
 
     if(updateClientProfile !== 1){
         return res.status(400).json("Não foi possível atualizar o cadastro do cliente.");
@@ -184,6 +185,7 @@ const customerInfo = async (req, res)=>{
         telefone: getCustomerInfo[0].telefone,
         cep: getCustomerInfo[0].cep,
         bairro: getCustomerInfo[0].bairro,
+        cidade: getCustomerInfo[0].cidade,
         logradouro: getCustomerInfo[0].logradouro,
         telefone: getCustomerInfo[0].telefone,
         complemento: getCustomerInfo[0].complemento,
