@@ -179,8 +179,15 @@ const customerInfo = async (req, res)=>{
     const customerObj = {
         id: getCustomerInfo[0].cliente_id,
         nome: getCustomerInfo[0].nome,
+        cpf: getCustomerInfo[0].cpf,
         email: getCustomerInfo[0].email,
         telefone: getCustomerInfo[0].telefone,
+        cep: getCustomerInfo[0].cep,
+        bairro: getCustomerInfo[0].bairro,
+        logradouro: getCustomerInfo[0].logradouro,
+        telefone: getCustomerInfo[0].telefone,
+        complemento: getCustomerInfo[0].complemento,
+        ponto_referencia: getCustomerInfo[0].ponto_referencia,
         cobrancas: getCustomerInfo.map(cobranca => ({
             id: cobranca.id,
             descricao: cobranca.descricao,
