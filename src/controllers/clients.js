@@ -193,10 +193,10 @@ const customerInfo = async (req, res)=>{
 
     console.log(id);
 
-    const getCustomerInfo = await knex('clientes').leftJoin('cobrancas', 'cobrancas.cliente_id', 'clientes.id').where('clientes.id', `${id}`).groupBy('clientes.id', 'cobrancas.id').debug();
+    const getCustomerInfo = await knex.select('clientes.id as id_cliente', 'cobrancas.cliente_id', '*').from('clientes').leftJoin('cobrancas', 'cobrancas.cliente_id', 'clientes.id').where('clientes.id', `${id}`).groupBy('clientes.id', 'cobrancas.id').debug();
 
     const customerObj = {
-        id: getCustomerInfo[0].cliente_id,
+        id: getCustomerInfo[0].id_cliente,
         nome: getCustomerInfo[0].nome,
         cpf: getCustomerInfo[0].cpf,
         email: getCustomerInfo[0].email,
@@ -219,8 +219,8 @@ const customerInfo = async (req, res)=>{
     }
 
 
-    console.log(getCustomerInfo);
-    console.log(customerObj);
+    // console.log(getCustomerInfo);
+    // console.log(customerObj);
 
     return res.status(200).json(customerObj);
 }
