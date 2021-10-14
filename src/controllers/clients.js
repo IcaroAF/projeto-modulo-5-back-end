@@ -208,18 +208,18 @@ const customerInfo = async (req, res)=>{
         telefone: getCustomerInfo[0].telefone,
         complemento: getCustomerInfo[0].complemento,
         ponto_referencia: getCustomerInfo[0].ponto_referencia,
-        cobrancas: getCustomerInfo.map(cobranca => ({
+        cobrancas: getCustomerInfo[0].valor ? getCustomerInfo.map(cobranca => ({
             id: cobranca.id,
             descricao: cobranca.descricao,
             valor: cobranca.valor,
             data_vencimento: cobranca.data_vencimento,
             status: cobranca.status
-        }))
+        })) : []
 
     }
 
 
-    // console.log(getCustomerInfo);
+    console.log(getCustomerInfo);
     // console.log(customerObj);
 
     return res.status(200).json(customerObj);
