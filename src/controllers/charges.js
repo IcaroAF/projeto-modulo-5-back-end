@@ -32,16 +32,16 @@ const createCharge = async(req, res)=> {
 
         if(existentCustomer.length === 0){
             return res.status(404).json(`Não há cliente com o id ${cliente_id} cadastrado no sistema`);
-        }
+        }   
 
 
-        if(new Date(data_vencimento).getTime()>Date.now() && status === "vencido"){
-            return res.status(400).json("Não é possível adicionar uma cobrança como vencida numa data futura.");
-        }
+        // if(new Date(data_vencimento).getTime()>Date.now() && status === "vencido"){
+        //     return res.status(400).json("Não é possível adicionar uma cobrança como vencida numa data futura.");
+        // }
 
-        if(new Date(data_vencimento).getTime()<Date.now() && status === "pendente"){
-            return res.status(400).json("Não é possível adicionar uma cobrança como pendente numa data passada.");
-        }
+        // if(new Date(data_vencimento).getTime()<Date.now() && status === "pendente"){
+        //     return res.status(400).json("Não é possível adicionar uma cobrança como pendente numa data passada.");
+        // }
 
 
     const chargeObj = {
@@ -63,10 +63,11 @@ const createCharge = async(req, res)=> {
 
 const listAllCharges = async(req, res)=> {
 
-    const getList = await knex.from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento').debug();
+    const getList = await knex.select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento', 
+    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < NOW() THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
 
-    //console.log(getList);
-
+    console.log(getList);
+    
     return res.json(getList);
 }
 
