@@ -44,4 +44,7 @@ routes.get('/users', users.getUser);
 // rota para atualização de cobrança
 routes.put('/charges/:idCobranca', charges.editCharge);
 
+// rota para exclusão de cobrança
+routes.delete('/charges/:idCobranca', charges.deleteCharge);
+
 module.exports = routes;

@@ -125,8 +125,37 @@ const editCharge = async(req, res)=>{
     }
 
 }
+
+const deleteCharge = async(req, res)=>{
+    const id = Number(req.params.idCobranca);
+
+    const chargeData = await knex('cobrancas').where('id', id);
+
+    console.log(chargeData);
+
+    if(chargeData.length ===0){
+        return res.status(404).json("A cobrança informada não foi encontrada.");
+    }
+
+    try {
+        if(chargeData[0].status === 'pendente' && chargeData[0].data_vencimento.getTime() > Date.now()){
+            const removeCharge = await knex('cobrancas').delete().where('id', id)
+                
+            return res.status(200).json("Cobrança removida com sucesso");
+        }else{
+            return res.status(404).json("Não foi possível excluir a cobrança");
+        }
+    
+       
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+
+    
+}
 module.exports = {
     createCharge,
     listAllCharges,
-    editCharge
+    editCharge,
+    deleteCharge
 }
