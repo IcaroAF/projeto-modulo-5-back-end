@@ -41,4 +41,7 @@ routes.get('/clients/:idCliente', clients.customerInfo);
 //obter usuario logado
 routes.get('/users', users.getUser);
 
+// rota para atualização de cobrança
+routes.put('/charges/:idCobranca', charges.editCharge);
+
 module.exports = routes;

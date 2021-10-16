@@ -67,11 +67,66 @@ const listAllCharges = async(req, res)=> {
     knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < NOW() THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
 
     console.log(getList);
-    
+
     return res.json(getList);
 }
 
+
+const editCharge = async(req, res)=>{
+    const id = Number(req.params.idCobranca);
+    const {cliente_id, descricao, valor, status, data_vencimento} = req.body;
+
+    if(!cliente_id){
+        return res.status(404).json("O campo cliente_id é obrigatório.");
+    }
+
+    if(!valor){
+        return res.status(404).json("O campo valor é obrigatório.");
+    }
+
+    if(!descricao){
+        return res.status(404).json("É obrigatório colocar uma descrição para a cobrança.");
+    }
+
+    if(!status){
+        return res.status(404).json("O campo status é obrigatório.");
+    }
+
+    if(!data_vencimento){
+        return res.status(404).json("O campo data_vencimento é obrigatório.");
+    }
+
+    console.log(id);
+
+    const chargeData = await knex('cobrancas').where('id', id);
+
+    if(chargeData.length ===0){
+        return res.status(404).json("A cobrança informada não foi encontrada.");
+    }
+
+    try {
+        const editedChargeObj = {
+            cliente_id, 
+            descricao, 
+            valor, 
+            status, 
+            data_vencimento
+        }
+
+        const updateCharge = await knex('cobrancas').update(editedChargeObj).where('id', id);
+
+        if(updateCharge !==1){
+            return res.status(400).json("Não foi possível atualizar a cobrança.");
+        }
+
+        return res.status(200).json("Cobrança atualizada com sucesso");
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+
+}
 module.exports = {
     createCharge,
-    listAllCharges
+    listAllCharges,
+    editCharge
 }
