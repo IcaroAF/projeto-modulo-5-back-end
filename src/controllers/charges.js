@@ -64,7 +64,7 @@ const createCharge = async(req, res)=> {
 const listAllCharges = async(req, res)=> {
 
     const getList = await knex.select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento', 
-    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < NOW() THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
+    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < (current_date+1) THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
 
     console.log(getList);
 
@@ -138,9 +138,9 @@ const deleteCharge = async(req, res)=>{
     }
 
     try {
-        if(chargeData[0].status === 'pendente' && chargeData[0].data_vencimento.getTime() > Date.now()){
+        if(chargeData[0].status === 'pendente' && chargeData[0].data_vencimento.getTime() < Date.now()){
             const removeCharge = await knex('cobrancas').delete().where('id', id)
-                
+
             return res.status(200).json("Cobrança removida com sucesso");
         }else{
             return res.status(404).json("Não foi possível excluir a cobrança");
