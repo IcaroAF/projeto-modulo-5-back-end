@@ -2,6 +2,7 @@ const knex = require('../connection');
 const axios = require('axios');
 const {cpf: validCPF} = require('cpf-cnpj-validator');
 const validEmail = require('email-validator');
+const {isBefore} = require('date-fns');
 
 const signUpClient = async (req, res)=>{
     const{nome, email, cpf, telefone, cep} = req.body;
@@ -171,19 +172,17 @@ const listAllCustomers = async (req, res)=>{
 
        let isOverdue = false;
 
+       const today = new Date();
+       today.setHours(0, 0, 0, 0);
+       
        customerCharges.map(charge => {
-           if(charge.data_vencimento.getTime()<Date.now() && charge.status !== 'pago'){
+           if(isBefore(charge.data_vencimento, today) && charge.status !== 'pago'){
             isOverdue = true;
            }
        })
 
        return {...customer, statusCliente: isOverdue? 'Inadimplente' : 'Em dia' }
    } ))
-
-
-
-
-    //console.log(getCustomersList)
 
     return res.json(CustomerObj);
 }
