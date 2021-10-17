@@ -5,7 +5,7 @@ const validEmail = require('email-validator');
 const {isBefore} = require('date-fns');
 
 const signUpClient = async (req, res)=>{
-    const{nome, email, cpf, telefone, cep} = req.body;
+    const{nome, email, cpf, telefone, cep,logradouro, bairro, cidade, estado, complemento, ponto_referencia} = req.body;
 
     if(!nome){
         return res.status(404).json("O campo nome é obrigatório.");
@@ -59,7 +59,8 @@ const signUpClient = async (req, res)=>{
             complemento,
             bairro,
             cidade,
-            estado
+            estado,
+            ponto_referencia
         }
 
         const query = await knex('clientes').insert(queryObject);
@@ -147,6 +148,8 @@ const editCLientProfile = async(req, res)=>{
     }
 
     const updateClientProfile = await knex('clientes').update(clientProfileObj).where('id', id);
+
+    console.log(updateClientProfile);
 
     if(updateClientProfile !== 1){
         return res.status(400).json("Não foi possível atualizar o cadastro do cliente.");
