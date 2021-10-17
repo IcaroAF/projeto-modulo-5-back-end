@@ -44,9 +44,9 @@ const signUpClient = async (req, res)=>{
             return res.status(400).json("Já existe um cliente com este CPF cadastrado.");
         }
         
-        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        // const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
-        const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
+        // const {logradouro, complemento, bairro, localidade: cidade, uf: estado} = response.data;
         
 
         const queryObject = {
@@ -127,9 +127,9 @@ const editCLientProfile = async(req, res)=>{
         }
     }
 
-    const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+    // const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
 
-    const {logradouro, bairro, localidade: cidade, uf: estado} = response.data;
+    // const {logradouro, bairro, localidade: cidade, uf: estado} = response.data;
 
     const clientProfileObj = {
         id,
