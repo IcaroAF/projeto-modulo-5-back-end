@@ -3,6 +3,7 @@ const users = require('./controllers/users');
 const login = require('./controllers/login');
 const clients = require('./controllers/clients');
 const charges = require('./controllers/charges');
+const reports = require('./controllers/reports');
 const verifyLogin = require('./filters/loginVerifier');
 
 
@@ -46,5 +47,8 @@ routes.put('/charges/:idCobranca', charges.editCharge);
 
 // rota para exclusão de cobrança
 routes.delete('/charges/:idCobranca', charges.deleteCharge);
+
+// rota para obtenção de relatório de cobranças
+routes.get('/reports/:statusCobranca', reports.chargesReports);
 
 module.exports = routes;
