@@ -49,6 +49,9 @@ routes.put('/charges/:idCobranca', charges.editCharge);
 routes.delete('/charges/:idCobranca', charges.deleteCharge);
 
 // rota para obtenção de relatório de cobranças
-routes.get('/reports/:statusCobranca', reports.chargesReports);
+routes.get('/reports/charges/:statusCobranca', reports.chargesReports); 
+
+//rota para obtenção de relatório
+routes.get('/reports/clients/:statusCliente', reports.customersReport);
 
 module.exports = routes;
