@@ -64,7 +64,7 @@ const createCharge = async(req, res)=> {
 const listAllCharges = async(req, res)=> {
 
     const getList = await knex.select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento', 
-    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < (current_date+1) THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
+    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < current_date THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
 
     console.log(getList);
 
