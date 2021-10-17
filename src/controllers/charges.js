@@ -1,4 +1,5 @@
 const knex = require('../connection');
+const {isAfter, isToday} = require('date-fns');
 
 const createCharge = async(req, res)=> {
     const {cliente_id, descricao, valor, status, data_vencimento} = req.body;
@@ -23,26 +24,12 @@ const createCharge = async(req, res)=> {
         return res.status(404).json("O campo data_vencimento é obrigatório.");
     }
 
-    // console.log(data_vencimento);
-    // console.log(new Date(data_vencimento).getTime());
-    // console.log(Date.now());
-
     try {
         const existentCustomer = await knex('clientes').select('nome', 'id').where('clientes.id', cliente_id);
 
         if(existentCustomer.length === 0){
             return res.status(404).json(`Não há cliente com o id ${cliente_id} cadastrado no sistema`);
         }   
-
-
-        // if(new Date(data_vencimento).getTime()>Date.now() && status === "vencido"){
-        //     return res.status(400).json("Não é possível adicionar uma cobrança como vencida numa data futura.");
-        // }
-
-        // if(new Date(data_vencimento).getTime()<Date.now() && status === "pendente"){
-        //     return res.status(400).json("Não é possível adicionar uma cobrança como pendente numa data passada.");
-        // }
-
 
     const chargeObj = {
         cliente_id, descricao, valor, status, data_vencimento
@@ -66,7 +53,7 @@ const listAllCharges = async(req, res)=> {
     const getList = await knex.select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento', 
     knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < current_date THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').debug();
 
-    console.log(getList);
+    //console.log(getList);
 
     return res.json(getList);
 }
@@ -133,12 +120,17 @@ const deleteCharge = async(req, res)=>{
 
     console.log(chargeData);
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     if(chargeData.length ===0){
         return res.status(404).json("A cobrança informada não foi encontrada.");
     }
 
+    console.log(isAfter(chargeData[0].data_vencimento, today));
+
     try {
-        if(chargeData[0].status === 'pendente' && chargeData[0].data_vencimento.getTime() < Date.now()){
+        if(chargeData[0].status === 'pendente' && (isAfter(chargeData[0].data_vencimento, today) || isToday(chargeData[0].data_vencimento))){
             const removeCharge = await knex('cobrancas').delete().where('id', id)
 
             return res.status(200).json("Cobrança removida com sucesso");
