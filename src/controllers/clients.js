@@ -76,7 +76,7 @@ const signUpClient = async (req, res)=>{
 
 const editCLientProfile = async(req, res)=>{
     const id  = Number(req.params.idCliente);
-    const{nome, email, cpf, telefone, cep, complemento, ponto_referencia} = req.body;
+    const{nome, email, cpf, telefone, cep, logradouro, bairro, cidade, estado, complemento, ponto_referencia} = req.body;
 
     if(!nome){
         return res.status(404).json("O campo nome é obrigatório.");
