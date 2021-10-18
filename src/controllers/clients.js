@@ -195,7 +195,8 @@ const customerInfo = async (req, res)=>{
 
     console.log(id);
 
-    const getCustomerInfo = await knex.select('clientes.id as id_cliente', 'cobrancas.cliente_id', '*').from('clientes').leftJoin('cobrancas', 'cobrancas.cliente_id', 'clientes.id').where('clientes.id', `${id}`).groupBy('clientes.id', 'cobrancas.id').debug();
+    const getCustomerInfo = await knex.select('clientes.id as id_cliente', 'cobrancas.cliente_id', '*',
+    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < current_date THEN 'vencido' ELSE cobrancas.status END`)).from('clientes').leftJoin('cobrancas', 'cobrancas.cliente_id', 'clientes.id').where('clientes.id', `${id}`).groupBy('clientes.id', 'cobrancas.id').debug();
 
     const customerObj = {
         id: getCustomerInfo[0].id_cliente,
