@@ -29,7 +29,7 @@ const customersReport = async (req, res)=>{
     const statusCustomer = req.params.statusCliente;
     console.log(statusCustomer);
 
-    if(statusCustomer !== "inadimplente" && statusReport !== 'em_dia'){
+    if(statusCustomer !== "inadimplente" && statusCustomer !== 'em_dia'){
         return res.status(404).json("Insira um status válido ('inadimplente', 'ou 'em_dia')");
     }
 
