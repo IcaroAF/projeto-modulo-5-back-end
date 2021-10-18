@@ -59,6 +59,22 @@ const listAllCharges = async(req, res)=> {
 }
 
 
+const listCharge = async(req, res)=>{
+
+    const id = Number(req.params.idCobranca);
+
+    const chargeData = await knex('cobrancas').where('id', id);
+
+    if(chargeData.length ===0){
+        return res.status(404).json("A cobrança informada não foi encontrada.");
+    }
+    
+    const getCharge = await knex.select('cobrancas.id', 'clientes.nome', 'descricao', 'valor', 'status', 'data_vencimento', 
+    knex.raw(`CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < current_date THEN 'vencido' ELSE cobrancas.status END`)).from('cobrancas').leftJoin('clientes', 'cobrancas.cliente_id', 'clientes.id').where('cobrancas.id', id);
+
+    return res.status(200).json(getCharge);
+}
+
 const editCharge = async(req, res)=>{
     const id = Number(req.params.idCobranca);
     const {cliente_id, descricao, valor, status, data_vencimento} = req.body;
@@ -148,6 +164,7 @@ const deleteCharge = async(req, res)=>{
 module.exports = {
     createCharge,
     listAllCharges,
+    listCharge,
     editCharge,
     deleteCharge
 }

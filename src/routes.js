@@ -33,6 +33,9 @@ routes.post('/charges', charges.createCharge);
 //rota para obter lista de cobranças
 routes.get('/charges', charges.listAllCharges);
 
+//rota para cobrança única
+routes.get('/charges/:idCobranca', charges.listCharge);
+
 //rota para obter lista de clientes
 routes.get('/clients', clients.listAllCustomers);
 
@@ -53,5 +56,7 @@ routes.get('/reports/charges/:statusCobranca', reports.chargesReports);
 
 //rota para obtenção de relatório
 routes.get('/reports/clients/:statusCliente', reports.customersReport);
+
+
 
 module.exports = routes;
