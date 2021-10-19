@@ -52,7 +52,7 @@ const createCharge = async (req, res) => {
       return res.status(400).json("Não foi possível cadastrar a cobrança");
     }
 
-    return res.status(200).json("cobranca cadastrada");
+    return res.status(200).json("Cobrança cadastrada.");
   } catch (error) {
     return res.status(400).json(error.message);
   }
@@ -149,7 +149,7 @@ const deleteCharge = async (req, res) => {
     if (
       chargeData[0].status === "pendente" &&
       (isAfter(chargeData[0].data_vencimento, today) ||
-        isToday(chargeData[0].data_vencimento))
+        !isToday(chargeData[0].data_vencimento))
     ) {
       const removeCharge = await knex("cobrancas").delete().where("id", id);
 
