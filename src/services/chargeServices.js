@@ -4,6 +4,7 @@ const getAllCharges = async (statusCharge, cobrancaId) => {
   const query = knex
     .select(
       "cobrancas.id",
+      "cobrancas.cliente_id",
       "clientes.nome",
       "descricao",
       "valor",
