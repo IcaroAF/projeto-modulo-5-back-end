@@ -47,6 +47,9 @@ As requisições remotas serão feitas a partir do seguinte link
 https://cubosacademy-projeto-5.herokuapp.com/
 ```
 
+Também será possível obter a collection com todos os endpoints através do arquivo
+`Insomnia_2021-10-20.json`
+
 ##Endpoints
 
 #### `POST` `/users`

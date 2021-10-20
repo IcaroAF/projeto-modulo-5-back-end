@@ -135,10 +135,6 @@ const editCLientProfile = async (req, res) => {
     return res.status(404).json("O cliente informado não foi encontrado.");
   }
 
-  //const { cliente } = clientData[0];
-
-  //req.cliente = cliente;
-
   try {
     const checkNewEmail = await knex("clientes")
       .where("email", email)
@@ -202,46 +198,55 @@ const listAllCustomers = async (req, res) => {
 const customerInfo = async (req, res) => {
   const id = Number(req.params.idCliente);
 
-  const getCustomerInfo = await knex
-    .select(
-      "clientes.id as id_cliente",
-      "cobrancas.cliente_id",
-      "*",
-      knex.raw(
-        `CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < date(timezone('UTC-3', now()::timestamp)) THEN 'vencido' ELSE cobrancas.status END`
+  const existingCustomer = await knex("clientes").where("clientes.id", id);
+
+  if (existingCustomer.length === 0) {
+    return res.status(404).json("O cliente informado não foi encontrado.");
+  }
+
+  try {
+    const getCustomerInfo = await knex
+      .select(
+        "clientes.id as id_cliente",
+        "cobrancas.cliente_id",
+        "*",
+        knex.raw(
+          `CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < date(timezone('UTC-3', now()::timestamp)) THEN 'vencido' ELSE cobrancas.status END`
+        )
       )
-    )
-    .from("clientes")
-    .leftJoin("cobrancas", "cobrancas.cliente_id", "clientes.id")
-    .where("clientes.id", `${id}`)
-    .groupBy("clientes.id", "cobrancas.id")
-    .debug();
+      .from("clientes")
+      .leftJoin("cobrancas", "cobrancas.cliente_id", "clientes.id")
+      .where("clientes.id", `${id}`)
+      .groupBy("clientes.id", "cobrancas.id");
 
-  const customerObj = {
-    id: getCustomerInfo[0].id_cliente,
-    nome: getCustomerInfo[0].nome,
-    cpf: getCustomerInfo[0].cpf,
-    email: getCustomerInfo[0].email,
-    telefone: getCustomerInfo[0].telefone,
-    cep: getCustomerInfo[0].cep,
-    bairro: getCustomerInfo[0].bairro,
-    cidade: getCustomerInfo[0].cidade,
-    logradouro: getCustomerInfo[0].logradouro,
-    telefone: getCustomerInfo[0].telefone,
-    complemento: getCustomerInfo[0].complemento,
-    ponto_referencia: getCustomerInfo[0].ponto_referencia,
-    cobrancas: getCustomerInfo[0].valor
-      ? getCustomerInfo.map((cobranca) => ({
-          id: cobranca.id,
-          descricao: cobranca.descricao,
-          valor: cobranca.valor,
-          data_vencimento: cobranca.data_vencimento,
-          status: cobranca.status,
-        }))
-      : [],
-  };
+    const customerObj = {
+      id: getCustomerInfo[0].id_cliente,
+      nome: getCustomerInfo[0].nome,
+      cpf: getCustomerInfo[0].cpf,
+      email: getCustomerInfo[0].email,
+      telefone: getCustomerInfo[0].telefone,
+      cep: getCustomerInfo[0].cep,
+      bairro: getCustomerInfo[0].bairro,
+      cidade: getCustomerInfo[0].cidade,
+      logradouro: getCustomerInfo[0].logradouro,
+      telefone: getCustomerInfo[0].telefone,
+      complemento: getCustomerInfo[0].complemento,
+      ponto_referencia: getCustomerInfo[0].ponto_referencia,
+      cobrancas: getCustomerInfo[0].valor
+        ? getCustomerInfo.map((cobranca) => ({
+            id: cobranca.id,
+            descricao: cobranca.descricao,
+            valor: cobranca.valor,
+            data_vencimento: cobranca.data_vencimento,
+            status: cobranca.status,
+          }))
+        : [],
+    };
 
-  return res.status(200).json(customerObj);
+    return res.status(200).json(customerObj);
+  } catch (error) {
+    return res.status(400).json(error.message);
+  }
 };
 
 module.exports = {
