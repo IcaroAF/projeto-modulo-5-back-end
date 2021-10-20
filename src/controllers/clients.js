@@ -208,7 +208,7 @@ const customerInfo = async (req, res) => {
       "cobrancas.cliente_id",
       "*",
       knex.raw(
-        `CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < current_date THEN 'vencido' ELSE cobrancas.status END`
+        `CASE WHEN cobrancas.status = 'pendente' AND data_vencimento < date(timezone('UTC-3', now()::timestamp)) THEN 'vencido' ELSE cobrancas.status END`
       )
     )
     .from("clientes")
