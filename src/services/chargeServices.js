@@ -6,6 +6,8 @@ const getAllCharges = async (statusCharge, cobrancaId) => {
       "cobrancas.id",
       "cobrancas.cliente_id",
       "clientes.nome",
+      "clientes.cpf",
+      "clientes.email",
       "descricao",
       "valor",
       "status",
