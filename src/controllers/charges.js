@@ -155,7 +155,7 @@ const deleteCharge = async (req, res) => {
     if (
       chargeData[0].status === "pendente" &&
       (isAfter(chargeData[0].data_vencimento, today) ||
-        !isToday(chargeData[0].data_vencimento))
+        isToday(chargeData[0].data_vencimento))
     ) {
       const removeCharge = await knex("cobrancas").delete().where("id", id);
 
