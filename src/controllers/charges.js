@@ -104,10 +104,10 @@ const editCharge = async (req, res) => {
     return res.status(404).json("O campo data_vencimento é obrigatório.");
   }
 
-  if (status !== "pago" && status !== "vencido") {
+  if (status !== "pago" && status !== "pendente") {
     return res
       .status(404)
-      .json("O campo status deve receber somente os status vencido ou pago");
+      .json("O campo status deve receber somente os status pendente ou pago");
   }
 
   const chargeData = await knex("cobrancas").where("id", id);
